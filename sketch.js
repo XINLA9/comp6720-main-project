@@ -1,3 +1,8 @@
+let stars = [];
+let speed = 5;
+let setSpeed = 5;
+let spaceshipActive = true;
+
 function setup() {
   // create the canvas using the full browser window
   createCanvas(windowWidth, windowHeight);
