@@ -73,23 +73,23 @@ function drawRails() {
   
   quad(width * 0.1,height,
     width * 0.16,height,
-    width * 0.47, height / 2,
-    width * 0.46,height /2);
+    width * 0.49, height / 2,
+    width * 0.48,height /2);
   
   quad(width * 0.9,height,
     width * 0.84,height,
-    width * 0.53, height / 2,
-    width * 0.54,height / 2);
+    width * 0.51, height / 2,
+    width * 0.52,height / 2);
   fill(70);
   quad(width * 0.17,height,
     width * 0.16,height,
-    width * 0.47, height / 2,
-    width * 0.471,height /2);
+    width * 0.49, height / 2,
+    width * 0.491,height /2);
   
   quad(width * 0.84,height,
     width * 0.82,height,
-    width * 0.53, height / 2,
-    width * 0.531,height /2);
+    width * 0.51, height / 2,
+    width * 0.511,height /2);
   
   pop();
   
@@ -194,21 +194,19 @@ class star {
 
 class Portal {
   constructor() {
-    this.x = width / 2; // 传送门的水平位置（居中）
-    this.y = height; // 从画布底部开始移动
-    this.size = 10; // 初始尺寸
-    this.targetSize = 200; // 最大尺寸（当传送门靠近时）
+    this.x = width / 2; 
+    this.y = height; 
+    this.size = 10; 
+    this.targetSize = 200; 
   }
 
   update() {
-    // 让传送门逐渐向上移动并变大
-    this.y -= 5; // 每帧向上移动
-    this.size += 2; // 每帧增大尺寸
-
-    // 如果传送门到达中间区域，切换场景并关闭传送门
+    this.y -= 5; 
+    this.size += 2; 
+    
     if (this.y < height / 2 && this.size >= this.targetSize) {
-      this.switchScene(); // 切换场景
-      portalActive = false; // 关闭传送门
+      this.switchScene(); 
+      portalActive = false; 
     }
   }
 
