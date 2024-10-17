@@ -2,7 +2,7 @@ let speed = 5;
 let railOffset = 0; 
 
 let scenes = ["forest", "city","space","dessert","sea"];
-let scene = "forest";
+let scene ;
 
 let stars = [];
 let ties = [];
@@ -14,6 +14,14 @@ let portalActive;
 function setup() {
   // create the canvas using the full browser window
   createCanvas(windowWidth, windowHeight);
+
+  for (let i = 0; i < 600; i++) {
+    stars[i] = new star();
+  }
+
+  // scene = random(scenes);
+  scene = "space";
+
 }
 
 function draw() {
@@ -31,8 +39,8 @@ function keyTyped() {
   if (key === " ") {
     saveCanvas("thumbnail.png");
   }
-  if (key == " right"){
-
+  if (keyCode === RIGHT_ARROW) {
+    portalActive = true; 
   }
 }
 
@@ -42,7 +50,12 @@ function drawRails() {
   stroke("sienna");
   strokeWeight(2);
 
-  // 绘制多根横木
+  for (let i = 0; i < ties.length; i++) {
+    ties[i].update();
+    ties[i].show();
+  }
+  pop();
+
   for (let i = 0; i < 1; i++) {
     let progress = (i + railOffset) % 50;
 
@@ -122,6 +135,7 @@ function drawSpace(){
   
    // draw space and stars
   push();
+  rectMode(CENTER);
   translate(width / 2, height / 2)
   background(5);
   for (let i = 0; i < stars.length; i++) {
@@ -191,6 +205,13 @@ class star {
 
   }
 }
+
+const portalColor = {
+  forest: color("green"),
+
+}
+
+class
 
 class Portal {
   constructor() {
