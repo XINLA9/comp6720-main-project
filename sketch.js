@@ -3,6 +3,7 @@ let railOffset = 0;
 
 let scenes = ["forest", "city","space","dessert","sea"];
 let scene ;
+let Scene;
 
 let stars = [];
 let ties = [];
@@ -21,7 +22,8 @@ function setup() {
 
   // scene = random(scenes);
   scene = "space";
-
+  portal = new Portal();
+  portal = new Portal
 }
 
 function draw() {
@@ -59,9 +61,8 @@ function drawRails() {
   for (let i = 0; i < 1; i++) {
     let progress = (i + railOffset) % 50;
 
-    // 根据透视缩放计算横木的位置和宽度
     let y = map(progress, 0, 50, height / 2, height);
-    let widthFactor = pow(progress / 50, 1.2); // 控制横木的透视缩放
+    let widthFactor = pow(progress / 50, 1.2); 
 
     let leftXTop = map(widthFactor, 0, 1, width / 2, width * 0.1);
     let rightXTop = map(widthFactor, 0, 1, width / 2, width * 0.9);
@@ -69,7 +70,7 @@ function drawRails() {
     let rightXBottom = map(widthFactor, 0, 1, width / 2, width * 0.92);
     
     let thick = map(progress, 2, 5, 0, 40);
-    // 绘制梯形横木
+
     quad(
       leftXTop, y - progress, 
       rightXTop, y - progress, 
@@ -78,7 +79,6 @@ function drawRails() {
     );
   }
   pop();
-  // 画铁轨
 
   push();
   noStroke();
@@ -211,19 +211,18 @@ const portalColor = {
 
 }
 
-class
-
 class Portal {
   constructor() {
     this.x = width / 2; 
-    this.y = height; 
-    this.size = 10; 
-    this.targetSize = 200; 
+    this.y = height / 2; 
+    this.sizeFactor = 0.02; 
+    do{this.scene = random[scenes]}
+    while( this.scene == scene);
   }
 
   update() {
     this.y -= 5; 
-    this.size += 2; 
+    this.sizeFactor = map(y, height / 2, height, 0.02, 0.4 );
     
     if (this.y < height / 2 && this.size >= this.targetSize) {
       this.switchScene(); 
@@ -232,11 +231,10 @@ class Portal {
   }
 
   show() {
-    // 绘制传送门（一个简单的圆形）
     push();
-    fill(255, 0, 255, 150); // 半透明的紫色
+    fill(this.color); 
     noStroke();
-    ellipse(this.x, this.y, this.size);
+    rect()
     pop();
   }
 
