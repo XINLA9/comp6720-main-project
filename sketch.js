@@ -244,27 +244,44 @@ class Portal {
     if(this.active){
       
       this.sizeFactor = map(this. y, height / 2, height, 0.02, 0.4 );
+      print(this.y);
+      this.show();
       
-      push();
-      
-      fill(this.color);
-      noStroke();
-  
-      let shortRadius = this.sizeFactor * width;
-      let longRadius = this.sizeFactor * height * 2;
-  
-  
-      arc(this.x, this.y, shortRadius, longRadius, PI, 0, CHORD);
-      pop();
-      
-      if (this.y > height && this.size >= this.targetSize) {
+      if (this.y > height) {
         scene = this.scene;
-        this.active = false; 
+        this.reset();
       }
       this.y += 5; 
     }
   }
   
+  show(){
+     push();
+      fill(color("red"));
+      noStroke();
+  
+      let shortRadius = this.sizeFactor * width;
+      let longRadius = this.sizeFactor * height * 3;
+  
+  
+      arc(this.x, this.y, shortRadius, longRadius, PI, 0, CHORD);
+      pop();
+  }
+  
+  reset(){
+    this.x = width / 2; 
+    this.y = height / 2; 
+    this.sizeFactor = 0.02; 
+    this.active = false;
+    this.scene = random(scenes);
+    print(this.scene);
+    
+    do{this.scene = random(scenes)}
+    while( this.scene == scene);
+    
+    this.color = portalColors[this.scene];
+    print(this.color);
+  }
   
 
 }
