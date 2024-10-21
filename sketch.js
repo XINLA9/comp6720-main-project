@@ -2,28 +2,36 @@ let speed = 5;
 let railOffset = 0; 
 
 let scenes = ["forest", "city","space","dessert","sea"];
-let scene ;
 let Scene;
+
 
 let stars = [];
 let ties = [];
 
 let portal;
-let portalActive;
+let portalColors = {};
 
 
 function setup() {
+  // scene = random(scenes);
+  scene = "space";
+  print(`The journey begins! The first spot is ${scene}.`);
   // create the canvas using the full browser window
   createCanvas(windowWidth, windowHeight);
 
   for (let i = 0; i < 600; i++) {
     stars[i] = new star();
   }
-
-  // scene = random(scenes);
-  scene = "space";
+  
+  portalColors = {
+    forest: color(0, 128, 0),  // 使用RGB
+    city: color(128, 128, 128),
+    space: color(0, 0, 255),
+    desert: color(255, 165, 0),
+    sea: color(0, 128, 128),
+  };
   portal = new Portal();
-  portal = new Portal
+  
 }
 
 function draw() {
@@ -32,6 +40,9 @@ function draw() {
     sceneFunctions[scene]();
   }
   drawRails(); 
+  
+  portal.update();
+
 }
 
 // when you hit the spacebar, what's currently on the canvas will be saved (as a
@@ -41,8 +52,13 @@ function keyTyped() {
   if (key === " ") {
     saveCanvas("thumbnail.png");
   }
-  if (keyCode === RIGHT_ARROW) {
-    portalActive = true; 
+
+}
+
+function keyPressed() {
+  if (keyCode === RIGHT_ARROW && portal.active === false) {
+    portal.active = true;
+    print("portal present!");
   }
 }
 
@@ -56,7 +72,7 @@ function drawRails() {
     ties[i].update();
     ties[i].show();
   }
-  pop();
+  
 
   for (let i = 0; i < 1; i++) {
     let progress = (i + railOffset) % 50;
@@ -206,44 +222,49 @@ class star {
   }
 }
 
-const portalColor = {
-  forest: color("green"),
-
-}
 
 class Portal {
   constructor() {
     this.x = width / 2; 
     this.y = height / 2; 
     this.sizeFactor = 0.02; 
-    do{this.scene = random[scenes]}
+    this.active = false;
+    this.scene = random(scenes);
+    print(this.scene);
+    
+    do{this.scene = random(scenes)}
     while( this.scene == scene);
+    
+    this.color = portalColors[this.scene];
+    print(this.color);
+    
   }
 
   update() {
-    this.y -= 5; 
-    this.sizeFactor = map(y, height / 2, height, 0.02, 0.4 );
-    
-    if (this.y < height / 2 && this.size >= this.targetSize) {
-      this.switchScene(); 
-      portalActive = false; 
+    if(this.active){
+      
+      this.sizeFactor = map(this. y, height / 2, height, 0.02, 0.4 );
+      
+      push();
+      
+      fill(this.color);
+      noStroke();
+  
+      let shortRadius = this.sizeFactor * width;
+      let longRadius = this.sizeFactor * height * 2;
+  
+  
+      arc(this.x, this.y, shortRadius, longRadius, PI, 0, CHORD);
+      pop();
+      
+      if (this.y > height && this.size >= this.targetSize) {
+        scene = this.scene;
+        this.active = false; 
+      }
+      this.y += 5; 
     }
   }
+  
+  
 
-  show() {
-    push();
-    fill(this.color); 
-    noStroke();
-    rect()
-    pop();
-  }
-
-  switchScene() {
-    // 随机切换到一个新场景
-    let newScene;
-    do {
-      newScene = random(scenes);
-    } while (newScene === scene); // 确保不会切换到相同场景
-    scene = newScene;
-  }
 }
