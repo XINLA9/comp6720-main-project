@@ -1,7 +1,7 @@
 let speed = 5; 
 let railOffset = 0; 
 
-let scenes = ["forest", "city","space","dessert","sea"];
+let scenes = ["forest", "space","desert","sea"];
 let Scene;
 
 
@@ -24,8 +24,7 @@ function setup() {
   }
   
   portalColors = {
-    forest: color(0, 128, 0),  // 使用RGB
-    city: color(128, 128, 128),
+    forest: color(0, 128, 0),  
     space: color(0, 0, 255),
     desert: color(255, 165, 0),
     sea: color(0, 128, 128),
@@ -36,9 +35,9 @@ function setup() {
 
 function draw() {
   // your cool abstract sonic artwork code goes in this draw function
-  if (sceneFunctions[scene]) {
-    sceneFunctions[scene]();
-  }
+
+  sceneFunctions[scene]();
+
   drawRails(); 
   
   portal.update();
@@ -128,7 +127,6 @@ function drawRails() {
 
  const sceneFunctions = {
   forest: drawForest,
-  city: drawCity,
   space: drawSpace,
   desert: drawDesert,
   sea: drawSea,
@@ -236,18 +234,16 @@ class Portal {
     while( this.scene == scene);
     
     this.color = portalColors[this.scene];
-    print(this.color);
+    // print(this.color);
     
   }
 
   update() {
     if(this.active){
       
-      this.sizeFactor = map(this. y, height / 2, height, 0.02, 0.4 );
-      print(this.y);
       this.show();
       
-      if (this.y > height) {
+      if (this.y > height * 1.3) {
         scene = this.scene;
         this.reset();
       }
@@ -257,13 +253,11 @@ class Portal {
   
   show(){
      push();
-      fill(color("red"));
+      fill(this.color);
       noStroke();
-  
-      let shortRadius = this.sizeFactor * width;
-      let longRadius = this.sizeFactor * height * 3;
-  
-  
+      // print(this.y);
+      let shortRadius = map(this.y, height / 2, height, 0.06 * width,  width );
+      let longRadius = map(this.y, height / 2, height, 0.1 * height,  2.5 * height );
       arc(this.x, this.y, shortRadius, longRadius, PI, 0, CHORD);
       pop();
   }
@@ -273,14 +267,13 @@ class Portal {
     this.y = height / 2; 
     this.sizeFactor = 0.02; 
     this.active = false;
-    this.scene = random(scenes);
+    // this.scene = random(scenes);
     print(this.scene);
     
     do{this.scene = random(scenes)}
     while( this.scene == scene);
     
     this.color = portalColors[this.scene];
-    print(this.color);
   }
   
 
