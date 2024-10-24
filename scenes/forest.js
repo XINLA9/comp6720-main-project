@@ -1,0 +1,3 @@
+function drawForest(){
+    background("green");
+  };

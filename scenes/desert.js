@@ -1,0 +1,4 @@
+function drawDesert(){
+    background("yellow");
+  };
+  
