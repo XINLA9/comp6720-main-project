@@ -4,20 +4,20 @@ function drawRails() {
   stroke("sienna");
   strokeWeight(2);
 
+  // draw railway sleeper
   for (let i = 0; i < sleepers.length; i++) {
     sleepers[i].update();
     sleepers[i].show();
   }
 
+  // draw rail
   push();
   noStroke();
   fill("grey");
-
   quad(width * 0.1, height,
     width * 0.16, height,
     width * 0.49, height / 2,
     width * 0.48, height / 2);
-
   quad(width * 0.9, height,
     width * 0.84, height,
     width * 0.51, height / 2,
@@ -27,12 +27,10 @@ function drawRails() {
     width * 0.16, height,
     width * 0.49, height / 2,
     width * 0.491, height / 2);
-
   quad(width * 0.84, height,
     width * 0.82, height,
     width * 0.51, height / 2,
     width * 0.511, height / 2);
-
   pop();
   railOffset += speed * 0.1;
 }
