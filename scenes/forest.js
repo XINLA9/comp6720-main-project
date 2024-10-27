@@ -1,6 +1,7 @@
 let isMF = false;
-let trees = [];
-let maxTrees = 20; // Maximum number of trees to generate
+let leftTrees = [];
+let rightTrees = [];
+let maxTrees = 120; // Maximum number of trees to generate
 
 function drawForest() {
   if (!isMF) {
@@ -12,55 +13,129 @@ function drawForest() {
     pop();
 
     // Randomly generate trees along the rail track
-    if (trees.length < maxTrees) {
+    if (leftTrees.length < maxTrees) {
       for (let i = 0; i < maxTrees; i++) {
         let xPos = random(width * 0.1, width * 0.9); // Random x position
         let yOffset = random(-50, 50); // Slight vertical offset for natural feel
-        trees.push(new Tree(xPos, 0.5 * height + yOffset));
+        leftTrees.push(new Tree(xPos, 0.5 * height + yOffset));
       }
     }
 
     // Draw all the trees
-    for (let tree of trees) {
-      tree.update();
-      tree.show();
-    }
+    drawTree();
   }
+}
+
+function drawTree() {
+  push();
+  rectMode(CENTER);
+  translate(width / 2, height / 2);
+  for (let tree of leftTrees) {
+    tree.update();
+    tree.show();
+  }
+  pop();
 }
 
 class Tree {
   constructor() {
-    this.x = random(-width, width);  // 随机生成 x 位置
-    this.y = random(-height, height); // 随机生成 y 位置
-    this.z = random(width);            // 随机生成深度
+    this.reset()
+  }
 
-    // 定义树的属性
-    this.color = [34, 139, 34];  // 树的颜色（绿色）
-    this.size = 15;               // 树的大小
+  // Reset the position and size of the pyramid
+  reset() {
+    do {
+      this.x = random(- 0.5 * width, 0.5 * width);
+    } while (this.x > - 0.3 * width && this.x < 0.3 * width);
+    this.y = random(0, height * 0.3);
+    this.z = width + height;
+
+    this.sx = 0;
+    this.sy = 0;
+    this.size = 0;
+
+    this.scene = random(scenes);
+    do this.scene = random(scenes);
+    while (this.scene == "space");
   }
 
   update() {
-    this.z -= speed; // 更新深度
+    this.z -= speed;
     if (this.z < 1) {
-      this.x = random(-width, width);
-      this.y = random(-height, height);
-      this.z = width; // 重置深度
+      this.reset();
     }
+
+    this.sx = map(this.x / this.z, 0, 1, 0, width);
+    this.sy = map(this.y / this.z, 0, 1, 0, height);
+    this.size = map(this.z, 0, width + height, width * 0.4, 0);
+
+    this.isClicked();
   }
 
   show() {
     push();
-    fill(this.color); // 使用树的颜色
-
+    fill(this.getColorBasedOnScene());
     noStroke();
 
-    // 根据 z 值计算位置
     let sx = map(this.x / this.z, 0, 1, 0, width);
     let sy = map(this.y / this.z, 0, 1, 0, height);
 
-    // 根据 z 值计算大小
-    let r = map(this.z, 0, width, this.size * 5, 0);
-    ellipse(sx, sy, r, r); // 绘制树的形状
+    let currentSize = map(this.z, 0, width, this.size * 5, 0);
+
+    stroke(101, 67, 33);
+    strokeWeight(5);
+    line(sx, sy, sx, sy - currentSize * 1.5); 
+
+    noStroke();
+    fill(this.getColorBasedOnScene());
+
+    // 绘制树叶，保持原来的三角形形状
+    triangle(
+      sx - currentSize / 2, sy - currentSize * 1.5, // 三角形底部
+      sx + currentSize / 2, sy - currentSize * 1.5, // 三角形底部
+      sx, sy - currentSize * 2 // 三角形顶部
+    );
+
+    triangle(
+      sx - currentSize / 2 * 0.8, sy - currentSize * 1.8, // 第二层三角形底部
+      sx + currentSize / 2 * 0.8, sy - currentSize * 1.8, // 第二层三角形底部
+      sx, sy - currentSize * 2.2 // 第二层三角形顶部
+    );
+
+    triangle(
+      sx - currentSize / 2 * 0.6, sy - currentSize * 2.2, // 第三层三角形底部
+      sx + currentSize / 2 * 0.6, sy - currentSize * 2.2, // 第三层三角形底部
+      sx, sy - currentSize * 2.6 // 第三层三角形顶部
+    );
+
     pop();
   }
+
+isClicked() {
+  if (mouseIsPressed) {
+    if (this.isHovered()) {
+      portal.open(this.scene);
+    }
+  }
+}
+
+isHovered() {
+  return (
+    dist(mouseX - 0.5 * width, mouseY - 0.5 * height, this.sx, this.sy) <
+    this.size / 2
+  );
+}
+
+getColorBasedOnScene() {
+  switch (this.scene) {
+    case "forest":
+      return [34, 139, 34];
+    case "desert":
+      return "yellow";
+    case "sea":
+      return [0, 105, 148];
+    case "space":
+      return [0, 105, 148];
+  }
+}
 }

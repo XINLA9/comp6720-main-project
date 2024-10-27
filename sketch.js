@@ -6,7 +6,7 @@ let portal;
 function setup() {
   // scene = random(scenes);
   scene = "space";
-
+  scene = "desert";
   // create the canvas using the full browser window
   createCanvas(windowWidth, windowHeight);
 
@@ -24,7 +24,8 @@ function setup() {
   setRail();
   portal = new Portal();
   
-  setSpace()
+  setSpace();
+  setDesert();
 
 }
 

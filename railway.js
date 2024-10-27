@@ -225,15 +225,4 @@ class Portal {
   }
 }
 
-// function getColorBasedOnScene(s) {
-//     switch (s) {
-//       case "forest":
-//         return [34, 139, 34];
-//       case "desert":
-//         return "yellow";
-//       case "sea":
-//         return [0, 105, 148];
-//       case "space":
-//         return [0, 105, 148];
-//     }
-//   }
+
