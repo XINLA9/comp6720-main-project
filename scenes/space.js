@@ -105,7 +105,7 @@ class Planet {
 
       let newScene = random(scenes);
       do newScene = random(scenes);
-      while (newScene == "space" || newScene == this.scene);
+      while (newScene == "space" || newScene == "mf" || newScene == this.scene);
       this.scene = newScene;
     }
 
@@ -152,6 +152,8 @@ class Planet {
   getColorBasedOnScene() {
     switch (this.scene) {
       case "forest":
+        return [34, 139, 34];
+      case "mf":
         return [34, 139, 34];
       case "desert":
         return "yellow";

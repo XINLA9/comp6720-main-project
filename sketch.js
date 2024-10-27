@@ -1,4 +1,4 @@
-let scenes = ["forest", "space", "desert", "sea"];
+let scenes = ["forest", "space", "desert", "sea", "mf"];
 let scene;
 let portal;
 
@@ -6,7 +6,7 @@ let portal;
 function setup() {
   // scene = random(scenes);
   scene = "space";
-  scene = "desert";
+  // scene = "desert";
   // create the canvas using the full browser window
   createCanvas(windowWidth, windowHeight);
 
@@ -64,4 +64,5 @@ const sceneFunctions = {
   space: drawSpace,
   desert: drawDesert,
   sea: drawSea,
+  mf: drawMagicForest
 };

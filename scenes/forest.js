@@ -1,141 +1,138 @@
-let isMF = false;
-let leftTrees = [];
-let rightTrees = [];
-let maxTrees = 120; // Maximum number of trees to generate
+let trees = [];
 
 function drawForest() {
-  if (!isMF) {
-    background(57, 190, 127); // Forest background
-    push();
-    noStroke();
-    fill(41, 130, 79); // Ground color
-    rect(0, 0.5 * height, width, 0.5 * height); // Draw ground
-    pop();
+  background(57, 190, 127);
+  push();
+  noStroke();
+  fill(41, 130, 79);
+  rect(0, 0.5 * height, width, 0.5 * height);
+  pop();
 
-    // Randomly generate trees along the rail track
-    if (leftTrees.length < maxTrees) {
-      for (let i = 0; i < maxTrees; i++) {
-        let xPos = random(width * 0.1, width * 0.9); // Random x position
-        let yOffset = random(-50, 50); // Slight vertical offset for natural feel
-        leftTrees.push(new Tree(xPos, 0.5 * height + yOffset));
-      }
-    }
-
-    // Draw all the trees
-    drawTree();
+  if(frameCount % 2 == 0){
+    let side = random(["left", "right"]);
+    trees.push(new Tree(side));
   }
+  
+
+  drawTree();
 }
 
 function drawTree() {
   push();
   rectMode(CENTER);
   translate(width / 2, height / 2);
-  for (let tree of leftTrees) {
+  
+  for (let i = trees.length - 1; i >= 0; i--) {
+    let tree = trees[i];
     tree.update();
     tree.show();
+
+    if (tree.z < 0) {
+      trees.splice(i, 1);
+    }
   }
   pop();
 }
 
 class Tree {
-  constructor() {
-    this.reset()
+  constructor(side) {
+    this.reset(side);
   }
 
-  // Reset the position and size of the pyramid
-  reset() {
+  reset(side) {
     do {
-      this.x = random(- 0.5 * width, 0.5 * width);
-    } while (this.x > - 0.3 * width && this.x < 0.3 * width);
-    this.y = random(0, height * 0.3);
+      if (side == "left") {
+        this.x = random(-0.5 * width, 0);
+      } else {
+        this.x = random(0, 0.5 * width);
+      }
+    } while (this.x > -0.1 * width && this.x < 0.1 * width);
+
+    this.y = random(height * 0.05, height * 0.1);
     this.z = width + height;
+    this.side = "side";
 
-    this.sx = 0;
-    this.sy = 0;
-    this.size = 0;
+    let types = ["silver", "sand", "magic", "star", "normal"];
+    
+    let number = random(1);
+    if (number < 0.95) {
+      this.type = "normal";
+    } else {
+      let specialIndex = int(random(4));
+      this.type = types[specialIndex];
+    }
+    this.clicked = false;
+  }
 
-    this.scene = random(scenes);
-    do this.scene = random(scenes);
-    while (this.scene == "space");
+  getColorBasedOnType() {
+    switch (this.type) {
+      case "silver":
+        return "silver";
+      case "sand":
+        return "#FF5722";
+      case "magic":
+        return "#673AB7";
+      case "star":
+        return "#FFEB3B";
+      case "normal":
+        return "#8BC34A";
+    }
   }
 
   update() {
     this.z -= speed;
-    if (this.z < 1) {
-      this.reset();
-    }
-
     this.sx = map(this.x / this.z, 0, 1, 0, width);
     this.sy = map(this.y / this.z, 0, 1, 0, height);
-    this.size = map(this.z, 0, width + height, width * 0.4, 0);
-
+    this.size = map(this.z, 0, width + height, width * 0.3, 0);
+    this.thick = map(this.z, 0, width + height,15, 0);
     this.isClicked();
   }
 
   show() {
     push();
-    fill(this.getColorBasedOnScene());
+
+    fill(this.getColorBasedOnType());
     noStroke();
-
-    let sx = map(this.x / this.z, 0, 1, 0, width);
-    let sy = map(this.y / this.z, 0, 1, 0, height);
-
-    let currentSize = map(this.z, 0, width, this.size * 5, 0);
 
     stroke(101, 67, 33);
-    strokeWeight(5);
-    line(sx, sy, sx, sy - currentSize * 1.5); 
+    strokeWeight(this.thick);
+    line(this.sx, this.sy, this.sx, this.sy - this.size * 1);
 
     noStroke();
-    fill(this.getColorBasedOnScene());
+    fill(this.getColorBasedOnType());
 
-    // 绘制树叶，保持原来的三角形形状
     triangle(
-      sx - currentSize / 2, sy - currentSize * 1.5, // 三角形底部
-      sx + currentSize / 2, sy - currentSize * 1.5, // 三角形底部
-      sx, sy - currentSize * 2 // 三角形顶部
+      this.sx - this.size / 2 * 1.3, this.sy - this.size * 1,
+      this.sx + this.size / 2 * 1.3, this.sy - this.size * 1,
+      this.sx, this.sy - this.size * 1.8
     );
 
     triangle(
-      sx - currentSize / 2 * 0.8, sy - currentSize * 1.8, // 第二层三角形底部
-      sx + currentSize / 2 * 0.8, sy - currentSize * 1.8, // 第二层三角形底部
-      sx, sy - currentSize * 2.2 // 第二层三角形顶部
+      this.sx - this.size / 2 * 1, this.sy - this.size * 1.5,
+      this.sx + this.size / 2 * 1, this.sy - this.size * 1.5,
+      this.sx, this.sy - this.size * 2.3
     );
 
     triangle(
-      sx - currentSize / 2 * 0.6, sy - currentSize * 2.2, // 第三层三角形底部
-      sx + currentSize / 2 * 0.6, sy - currentSize * 2.2, // 第三层三角形底部
-      sx, sy - currentSize * 2.6 // 第三层三角形顶部
+      this.sx - this.size / 2 * 0.8, this.sy - this.size * 2,
+      this.sx + this.size / 2 * 0.8, this.sy - this.size * 2,
+      this.sx, this.sy - this.size * 2.7
     );
 
     pop();
   }
 
-isClicked() {
-  if (mouseIsPressed) {
-    if (this.isHovered()) {
-      portal.open(this.scene);
+  isClicked() {
+    if (mouseIsPressed) {
+      if (this.isHovered()) {
+      }
     }
   }
-}
 
-isHovered() {
-  return (
-    dist(mouseX - 0.5 * width, mouseY - 0.5 * height, this.sx, this.sy) <
-    this.size / 2
-  );
-}
-
-getColorBasedOnScene() {
-  switch (this.scene) {
-    case "forest":
-      return [34, 139, 34];
-    case "desert":
-      return "yellow";
-    case "sea":
-      return [0, 105, 148];
-    case "space":
-      return [0, 105, 148];
+  isHovered() {
+    return (
+      dist(mouseX - 0.5 * width, mouseY - 0.5 * height, this.sx, this.sy) <
+      this.size / 2
+    );
   }
-}
 }

@@ -221,8 +221,8 @@ class Portal {
         return [0, 105, 148];
       case "space":
         return [0, 105, 148];
+      case "mf":
+        return [0, 105, 148];
     }
   }
 }
-
-

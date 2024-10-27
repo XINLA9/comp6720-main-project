@@ -4,12 +4,14 @@ let eyeCircle = 0;
 let eyeRandom = 0;
 let maxPyramids = 1;
 let pyramids = [];
+let count = 0;
+let cycleDuration = 1440;
 
+// let eyeOpen = false;
+let eyeOpen = true;
+let mountainGreen = 0;
 
 function setDesert() {
-  // for (let i = 0; i < maxPyramids; i++) {
-  //   pyramids.push(new Pyramid());
-  // }
   pyramids.push(new Pyramid("left"));
   pyramids.push(new Pyramid("right"));
 }
@@ -17,8 +19,13 @@ function setDesert() {
 // Main drawing function
 function drawDesert() {
   moonSize = 0.2 * width;
-  let cycleDuration = 1440;
-  let t = (frameCount % cycleDuration) / cycleDuration;
+
+  count++;
+  // print(count);
+  if (count > cycleDuration) {
+    count = 0;
+  }
+  let t = (count % cycleDuration) / cycleDuration;
 
   // Draw scene elements in order
   drawSky(t);
@@ -46,6 +53,9 @@ function drawSky(t) {
 
 // Ground drawing function
 function drawGround(t) {
+  push();
+
+  // Draw the land
   const dayColor2 = color(245, 67, 54);
   const nightColor2 = color(254, 160, 64);
   let groundColor;
@@ -57,12 +67,90 @@ function drawGround(t) {
   } else {
     groundColor = lerpColor(dayColor2, nightColor2, (t - 0.75) * 2);
   }
-
   strokeWeight(0);
   fill(groundColor);
   rect(0, height * 0.5, width, height * 0.5);
+
+  // Draw background mountains (first layer)
+  let colorM1;
+  if (mountainGreen > 0) {
+    colorM1 = color("#8BC34A");
+  } else {
+    colorM1 = color("black");
+  }
+  colorM1.setAlpha(150);
+
+  fill(colorM1);
+  beginShape();
+  vertex(0, height * 0.5);
+  vertex(width * 0.2, height * 0.35);
+  vertex(width * 0.4, height * 0.4);
+  vertex(width * 0.7, height * 0.3);
+  vertex(width, height * 0.5);
+
+  endShape(CLOSE);
+
+  // Draw closer mountains (second layer)
+  if (mountainGreen > 1) {
+    colorM1 = color("#8BC34A");
+  } else {
+    colorM1 = color(30, 30, 30);
+  }
+  colorM1.setAlpha(200);
+  fill(colorM1);
+
+  beginShape();
+  vertex(0, height * 0.5);
+  vertex(width * 0.3, height * 0.4);
+  vertex(width * 0.5, height * 0.35);
+  vertex(width * 0.8, height * 0.42);
+  vertex(width, height * 0.5);
+
+  endShape(CLOSE);
+
+  if (mountainGreen > 1) {
+    stroke(255);
+    strokeWeight(5);
+    noFill();
+
+    if (
+      isHoveredMountain(width * 0.2, height * 0.35, width * 0.4) ||
+      isHoveredMountain(width * 0.3, height * 0.4, width * 0.5)
+    ) {
+      beginShape();
+      vertex(0, height * 0.5);
+      vertex(width * 0.2, height * 0.35);
+      vertex(width * 0.4, height * 0.4);
+      vertex(width * 0.7, height * 0.3);
+      vertex(width, height * 0.5);
+
+      endShape(CLOSE);
+
+      beginShape();
+      vertex(0, height * 0.5);
+      vertex(width * 0.3, height * 0.4);
+      vertex(width * 0.5, height * 0.35);
+      vertex(width * 0.8, height * 0.42);
+      vertex(width, height * 0.5);
+      endShape(CLOSE);
+    }
+  }
+
+  if (mouseIsPressed && mountainGreen > 1) {
+    if (
+      isHoveredMountain(width * 0.2, height * 0.35, width * 0.4) ||
+      (isHoveredMountain(width * 0.3, height * 0.4, width * 0.5) &&
+        !portal.active)
+    ) {
+      portal.open("forest");
+    }
+  }
+  pop();
 }
 
+function isHoveredMountain(mx, my, size) {
+  return dist(mouseX, mouseY, mx, my) < size / 2;
+}
 
 // Planet (sun/moon) drawing function
 function drawPlanet(x, y, t) {
@@ -77,7 +165,24 @@ function drawPlanet(x, y, t) {
   drawMoonTexture(x, -y);
 
   // Eye
-  drawEye(x, 0, PI / 2, t + eyeRandom, 100, 40);
+  if (eyeOpen) {
+    drawEye(x, 0, PI / 2, t + eyeRandom, 100, 40);
+    
+    // Check if the mouse is hovering over the moon
+    let moonX = x;
+    let moonY = -y;
+
+    let isHoveredMoon = mouseY < 0.2 *  height;
+    if (isHoveredMoon && count > 900 && count < 1200) {
+      stroke(255, 215, 0); 
+      strokeWeight(5);
+      noFill();
+      circle(moonX, moonY, moonSize);
+      if (mouseIsPressed && !portal.active){
+        portal.open("sea");
+      }
+    }
+  }
 
   // Sun
   fill(255, 204, 0);
@@ -119,7 +224,6 @@ function drawEye(x, y, r, t, outerSize, innerSize) {
   pop();
 }
 
-
 // Desert scene with pyramids
 function drawPyramid() {
   // Draw pyramids
@@ -127,7 +231,6 @@ function drawPyramid() {
   rectMode(CENTER);
   translate(width / 2, height / 2);
   for (let i = pyramids.length - 1; i >= 0; i--) {
-    print("123");
     pyramids[i].update();
     pyramids[i].show();
 
@@ -139,33 +242,34 @@ function drawPyramid() {
   pop();
 }
 
-
 class Pyramid {
   constructor(side) {
-    this.reset(side)
+    this.reset(side);
   }
 
   // Reset the position and size of the pyramid
-  reset() {
+  reset(side) {
     do {
-      this.x = random(- 0.5 *width, 0.5 * width);
-    } while (this.x > - 0.3 * width && this.x < 0.3 * width);
-    this.y = random(0, height * 0.3);
+      if (side == "left") {
+        this.x = random(-0.5 * width, 0);
+      } else if (side == "right") {
+        this.x = random(0, 0.5 * width);
+      }
+    } while (this.x > -0.2 * width && this.x < 0.2 * width);
+
+    this.y = random(0, height * 0.07);
     this.z = width + height;
+    this.side = "side";
 
-    this.sx = 0;
-    this.sy = 0;
-    this.size = 0;
-
-    this.scene = random(scenes);
-    do this.scene = random(scenes);
-    while (this.scene == "space");
+    let types = ["night", "day", "eye", "forest", "normal"];
+    this.type = random(types);
+    this.clicked = false;
   }
 
   update() {
     this.z -= speed;
     if (this.z < 1) {
-      this.reset();
+      this.reset(this.side);
     }
 
     this.sx = map(this.x / this.z, 0, 1, 0, width);
@@ -178,14 +282,18 @@ class Pyramid {
   show() {
     push();
 
-    fill(this.getColorBasedOnScene());
+    // Draw the main body of the pyramid
+    fill(this.getColorBasedOnType());
 
     noStroke();
 
     triangle(
-      this.sx - this.size / 2, this.sy,
-      this.sx + this.size / 2, this.sy,
-      this.sx, this.sy - this.size
+      this.sx - this.size / 2,
+      this.sy,
+      this.sx + this.size / 2,
+      this.sy,
+      this.sx,
+      this.sy - this.size
     );
 
     // Draw the side of the pyramid
@@ -200,15 +308,37 @@ class Pyramid {
       stroke(255);
       strokeWeight(0.05 * this.size);
       noFill();
-      ellipse(this.sx, this.sy, this.size, this.size);
+      triangle(
+        this.sx - this.size / 2,
+        this.sy,
+        this.sx + this.size / 2,
+        this.sy,
+        this.sx,
+        this.sy - this.size
+      );
     }
     pop();
   }
 
   isClicked() {
     if (mouseIsPressed) {
-      if (this.isHovered()) {
-        portal.open(this.scene);
+      if (this.isHovered() && this.clicked == false) {
+        this.clicked = true;
+        switch (this.type) {
+          case "forest":
+            mountainGreen++;
+          case "normal":
+            break;
+          case "eye":
+            eyeOpen = true;
+            break;
+          case "night":
+            count = 1080;
+            break;
+          case "day":
+            count = 360;
+            break;
+        }
       }
     }
   }
@@ -220,17 +350,18 @@ class Pyramid {
     );
   }
 
-  getColorBasedOnScene() {
-    switch (this.scene) {
+  getColorBasedOnType() {
+    switch (this.type) {
       case "forest":
-        return [34, 139, 34];
-      case "desert":
-        return "yellow";
-      case "sea":
-        return [0, 105, 148];
-      case "space":
-        return [0, 105, 148];
+        return "green";
+      case "normal":
+        return "#FFC107";
+      case "eye":
+        return "rgb(195,195,195)";
+      case "night":
+        return "black";
+      case "day":
+        return "#E7D748";
     }
   }
 }
-
