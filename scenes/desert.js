@@ -7,9 +7,11 @@ let pyramids = [];
 
 
 function setDesert() {
-  for (let i = 0; i < maxPyramids; i++) {
-    pyramids.push(new Pyramid());
-  }
+  // for (let i = 0; i < maxPyramids; i++) {
+  //   pyramids.push(new Pyramid());
+  // }
+  pyramids.push(new Pyramid("left"));
+  pyramids.push(new Pyramid("right"));
 }
 
 // Main drawing function
@@ -139,8 +141,8 @@ function drawPyramid() {
 
 
 class Pyramid {
-  constructor() {
-    this.reset()
+  constructor(side) {
+    this.reset(side)
   }
 
   // Reset the position and size of the pyramid
