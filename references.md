@@ -1,2 +1,4 @@
 # References
-- [1] Example Author. 2022. p5.js example code video. Retrieved from https://example.com/video
+- [1] "Crazy Moon" Xinhe Lai. 2024. p5.js digitial artwork. Retrieved from https://example.com/video
+- [2] "Faster than Light" Xinhe Lai. 2024. p5.js digitial artwork. Retrieved from https://example.com/video
+- [3] "Symphony of Squares and Circles" Xinhe Lai. 2024. p5.js digitial artwork. Retrieved from https://example.com/video
