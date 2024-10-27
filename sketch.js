@@ -66,11 +66,11 @@ function keyPressed() {
     portal.active = true;
     
   }
-  if (keyCode === UP_ARROW && speed < 5) {
-    speed +=0.1;
+  if (keyCode === UP_ARROW && speed < 8) {
+    speed +=0.5;
   }
   if (keyCode === DOWN_ARROW && speed > 3.5) {
-    speed -=0.1;
+    speed -=0.5;
   }
 }
 
