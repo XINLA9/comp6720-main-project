@@ -7,7 +7,8 @@ function setup() {
   // scene = random(scenes);
   scene = "space";
   // scene = "desert";
-  scene = "forest";
+  // scene = "forest";
+  scene = "sea";
   // create the canvas using the full browser window
   createCanvas(windowWidth, windowHeight);
 
@@ -15,18 +16,28 @@ function setup() {
     stars[i] = new Star();
   }
 
-  portalColors = {
-    forest: color(0, 128, 0),
-    space: color(0, 0, 255),
-    desert: color(255, 165, 0),
-    sea: color(0, 128, 128),
-  };
-
   setRail();
   portal = new Portal();
   
   setSpace();
   setDesert();
+
+   // set preset background color
+   presetBgColors = [
+    color(200),
+    color(210),
+    color(220)
+  ];
+
+
+  // Initialize oscillator and envelope
+  osc = new p5.Oscillator('sine');
+  osc.start();
+  osc.amp(0);
+
+  env = new p5.Envelope();
+  env.setADSR(0.01, 0.2, 0.5, 0.1);
+  env.setRange(1, 0);
 
 }
 
@@ -50,13 +61,25 @@ function keyTyped() {
 
 function keyPressed() {
   if (keyCode === RIGHT_ARROW && portal.active === false) {
+    
+    print(portal.scene);
     portal.active = true;
+    
   }
   if (keyCode === UP_ARROW && speed < 5) {
     speed +=0.1;
   }
   if (keyCode === DOWN_ARROW && speed > 3.5) {
     speed -=0.1;
+  }
+}
+
+// Mouse press generates ripples
+function mousePressed() {
+  // Limit the number of ripples to 3; create new ones only after the previous ones disappear
+  if (scene == "sea" && ripples.length < 3) {
+    let newRipple = new Ripple(mouseX, mouseY);
+    ripples.push(newRipple);
   }
 }
 

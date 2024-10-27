@@ -2,7 +2,6 @@ let sleepers = [];
 let intervals = 20;
 let sleeperCount = intervals;
 let station;
-let portalColors = {};
 let stationY;
 let stationSpeed;
 
@@ -202,7 +201,7 @@ class Portal {
       this.scene = random(scenes);
     } while (this.scene == scene);
 
-    this.color = portalColors[this.scene];
+    this.color = this.getColorBasedOnScene();
   }
 
   open(s) {

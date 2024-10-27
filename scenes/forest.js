@@ -1,4 +1,4 @@
-let trees = [];
+let seaTrees = [];
 let treeCount = [0, 0, 0, 0];
 let isMagicForest = false;
 
@@ -13,7 +13,7 @@ function drawForest() {
 
   if (frameCount % 2 == 0) {
     let side = random(["left", "right"]);
-    trees.push(new Tree(side));
+    seaTrees.push(new Tree(side));
   }
 
   drawTree();
@@ -24,13 +24,13 @@ function drawTree() {
   rectMode(CENTER);
   translate(width / 2, height / 2);
 
-  for (let i = trees.length - 1; i >= 0; i--) {
-    let tree = trees[i];
+  for (let i = seaTrees.length - 1; i >= 0; i--) {
+    let tree = seaTrees[i];
     tree.update();
     tree.show();
 
     if (tree.z < 0) {
-      trees.splice(i, 1);
+      seaTrees.splice(i, 1);
     }
   }
   pop();
@@ -54,15 +54,17 @@ class Tree {
     this.z = width + height;
     this.side = "side";
 
-    let types = ["silver", "sand", "magic", "star", "normal"];
+    let types = ["silver", "sand",  "star","magic", "normal"];
 
     if (!isMagicForest){
       let number = random(1);
-      if (number < 0.95) {
+      if (number < 0.8) {
         this.type = "normal";
-      } else {
-        let specialIndex = int(random(4));
-        this.type = types[specialIndex];
+      } else if(number >=0.8 && number < 0.9){
+        this.type = "magic";
+      }else
+        {
+        this.type = types[int(random(3))];
       }
     }
     else{

@@ -3,7 +3,7 @@ let moonSize;
 let eyeCircle = 0;
 let eyeRandom = 0;
 let maxPyramids = 1;
-let pyramids = [];
+let seaPyramids = [];
 let count = 0;
 let cycleDuration = 1440;
 
@@ -12,8 +12,8 @@ let eyeOpen = false;
 let mountainGreen = 0;
 
 function setDesert() {
-  pyramids.push(new Pyramid("left"));
-  pyramids.push(new Pyramid("right"));
+  seaPyramids.push(new Pyramid("left"));
+  seaPyramids.push(new Pyramid("right"));
 }
 
 // Main drawing function
@@ -234,13 +234,13 @@ function drawPyramid() {
   push();
   rectMode(CENTER);
   translate(width / 2, height / 2);
-  for (let i = pyramids.length - 1; i >= 0; i--) {
-    pyramids[i].update();
-    pyramids[i].show();
+  for (let i = seaPyramids.length - 1; i >= 0; i--) {
+    seaPyramids[i].update();
+    seaPyramids[i].show();
 
-    if (pyramids[i].z < -100) {
-      pyramids.splice(i, 1);
-      pyramids.push(new Pyramid());
+    if (seaPyramids[i].z < -100) {
+      seaPyramids.splice(i, 1);
+      seaPyramids.push(new Pyramid());
     }
   }
   pop();

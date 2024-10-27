@@ -93,7 +93,7 @@ class Planet {
 
     this.scene = random(scenes);
     do this.scene = random(scenes);
-    while (this.scene == "space");
+    while (this.scene == "space" || this.scene == "mf") ;
   }
 
   update() {
