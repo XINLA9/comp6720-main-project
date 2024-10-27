@@ -64,7 +64,7 @@ class MagicTree {
     this.sx = map(this.x / this.z, 0, 1, 0, width);
     this.sy = map(this.y / this.z, 0, 1, 0, height);
     this.size = map(this.z, 0, width + height, width * 0.4, 0);
-
+    
     this.isClicked();
   }
 

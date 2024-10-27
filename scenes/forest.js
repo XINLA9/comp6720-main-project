@@ -1,6 +1,9 @@
 let trees = [];
+let treeCount = [0, 0, 0, 0];
+let isMagicForest = false;
 
 function drawForest() {
+  isMagicForest = false;
   background(57, 190, 127);
   push();
   noStroke();
@@ -8,11 +11,10 @@ function drawForest() {
   rect(0, 0.5 * height, width, 0.5 * height);
   pop();
 
-  if(frameCount % 2 == 0){
+  if (frameCount % 2 == 0) {
     let side = random(["left", "right"]);
     trees.push(new Tree(side));
   }
-  
 
   drawTree();
 }
@@ -21,7 +23,7 @@ function drawTree() {
   push();
   rectMode(CENTER);
   translate(width / 2, height / 2);
-  
+
   for (let i = trees.length - 1; i >= 0; i--) {
     let tree = trees[i];
     tree.update();
@@ -53,14 +55,21 @@ class Tree {
     this.side = "side";
 
     let types = ["silver", "sand", "magic", "star", "normal"];
-    
-    let number = random(1);
-    if (number < 0.95) {
-      this.type = "normal";
-    } else {
-      let specialIndex = int(random(4));
-      this.type = types[specialIndex];
+
+    if (!isMagicForest){
+      let number = random(1);
+      if (number < 0.95) {
+        this.type = "normal";
+      } else {
+        let specialIndex = int(random(4));
+        this.type = types[specialIndex];
+      }
     }
+    else{
+      this.type = "night";
+    }
+    this.magicColor = random(["#607D8B", "#9E9E9E"]);
+    this.color = this.getColorBasedOnType();
     this.clicked = false;
   }
 
@@ -73,9 +82,11 @@ class Tree {
       case "magic":
         return "#673AB7";
       case "star":
-        return "#FFEB3B";
+        return "#00BCD4";
       case "normal":
-        return "#8BC34A";
+        return random(["#8BC34A", "#4CAF50"]);
+      case "night":
+        return random(["#8BC34A", "#4CAF50"]);
     }
   }
 
@@ -83,56 +94,166 @@ class Tree {
     this.z -= speed;
     this.sx = map(this.x / this.z, 0, 1, 0, width);
     this.sy = map(this.y / this.z, 0, 1, 0, height);
-    this.size = map(this.z, 0, width + height, width * 0.3, 0);
-    this.thick = map(this.z, 0, width + height,15, 0);
+    if(this.type == "night"){
+      let nightSize = map(this.z, 0, width + height, width * 0.4, 0)
+      this.size = map(this.z, 0, width + height, nightSize * 1.5, nightSize * -2);
+      // print(this.size);
+    }
+    else{
+      this.size = map(this.z, 0, width + height, width * 0.3, 0);
+    }
+    this.thick = map(this.z, 0, width + height, 15, 0);
     this.isClicked();
   }
 
   show() {
     push();
 
-    fill(this.getColorBasedOnType());
-    noStroke();
-
     stroke(101, 67, 33);
     strokeWeight(this.thick);
     line(this.sx, this.sy, this.sx, this.sy - this.size * 1);
 
     noStroke();
-    fill(this.getColorBasedOnType());
+    if(isMagicForest){
+      if(this.size > 0){
+      fill(this.magicColor);
+    }
+    else{
+      fill(this.color);
+    }
+    }
+    else{
+      fill(this.color);
+    }
+    
+    
 
     triangle(
-      this.sx - this.size / 2 * 1.3, this.sy - this.size * 1,
-      this.sx + this.size / 2 * 1.3, this.sy - this.size * 1,
-      this.sx, this.sy - this.size * 1.8
+      this.sx - (this.size / 2) * 1.3,
+      this.sy - this.size * 1,
+      this.sx + (this.size / 2) * 1.3,
+      this.sy - this.size * 1,
+      this.sx,
+      this.sy - this.size * 1.8
     );
 
     triangle(
-      this.sx - this.size / 2 * 1, this.sy - this.size * 1.5,
-      this.sx + this.size / 2 * 1, this.sy - this.size * 1.5,
-      this.sx, this.sy - this.size * 2.3
+      this.sx - (this.size / 2) * 1,
+      this.sy - this.size * 1.5,
+      this.sx + (this.size / 2) * 1,
+      this.sy - this.size * 1.5,
+      this.sx,
+      this.sy - this.size * 2.3
     );
 
     triangle(
-      this.sx - this.size / 2 * 0.8, this.sy - this.size * 2,
-      this.sx + this.size / 2 * 0.8, this.sy - this.size * 2,
-      this.sx, this.sy - this.size * 2.7
+      this.sx - (this.size / 2) * 0.8,
+      this.sy - this.size * 2,
+      this.sx + (this.size / 2) * 0.8,
+      this.sy - this.size * 2,
+      this.sx,
+      this.sy - this.size * 2.7
     );
+
+    if (this.isHovered() && this.type != "normal" && this.type != "night") {
+      stroke(255);
+      strokeWeight(5);
+
+      line(
+        this.sx - (this.size / 2) * 1.3,
+        this.sy - this.size * 1,
+        this.sx + (this.size / 2) * 1.3,
+        this.sy - this.size * 1
+      );
+      line(
+        this.sx + (this.size / 2) * 1.3,
+        this.sy - this.size * 1,
+        this.sx,
+        this.sy - this.size * 1.8
+      );
+      line(
+        this.sx,
+        this.sy - this.size * 1.8,
+        this.sx - (this.size / 2) * 1.3,
+        this.sy - this.size * 1
+      );
+
+      line(
+        this.sx - (this.size / 2) * 1,
+        this.sy - this.size * 1.5,
+        this.sx + (this.size / 2) * 1,
+        this.sy - this.size * 1.5
+      );
+      line(
+        this.sx + (this.size / 2) * 1,
+        this.sy - this.size * 1.5,
+        this.sx,
+        this.sy - this.size * 2.3
+      );
+      line(
+        this.sx,
+        this.sy - this.size * 2.3,
+        this.sx - (this.size / 2) * 1,
+        this.sy - this.size * 1.5
+      );
+
+      line(
+        this.sx - (this.size / 2) * 0.8,
+        this.sy - this.size * 2,
+        this.sx + (this.size / 2) * 0.8,
+        this.sy - this.size * 2
+      );
+      line(
+        this.sx + (this.size / 2) * 0.8,
+        this.sy - this.size * 2,
+        this.sx,
+        this.sy - this.size * 2.7
+      );
+      line(
+        this.sx,
+        this.sy - this.size * 2.7,
+        this.sx - (this.size / 2) * 0.8,
+        this.sy - this.size * 2
+      );
+    }
 
     pop();
   }
 
   isClicked() {
     if (mouseIsPressed) {
-      if (this.isHovered()) {
+      if (this.isHovered() && !portal.active) {
+        switch (this.type) {
+          case "silver":
+            portal.open("sea");
+            break;
+          case "sand":
+            portal.open("desert");
+            break;
+          case "magic":
+            portal.open("mf");
+            break;
+          case "star":
+            portal.open("space");
+            break;
+          case "normal":
+            break;
+          case "magic":
+            break;
+        }
       }
     }
   }
 
   isHovered() {
     return (
-      dist(mouseX - 0.5 * width, mouseY - 0.5 * height, this.sx, this.sy) <
-      this.size / 2
+      dist(
+        mouseX - 0.5 * width,
+        mouseY - 0.5 * height,
+        this.sx,
+        this.sy - this.size * 1
+      ) <
+      this.size / 4
     );
   }
 }

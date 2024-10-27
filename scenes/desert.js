@@ -7,8 +7,8 @@ let pyramids = [];
 let count = 0;
 let cycleDuration = 1440;
 
-// let eyeOpen = false;
-let eyeOpen = true;
+let eyeOpen = false;
+// let eyeOpen = true;
 let mountainGreen = 0;
 
 function setDesert() {
@@ -18,7 +18,7 @@ function setDesert() {
 
 // Main drawing function
 function drawDesert() {
-  moonSize = 0.2 * width;
+  
 
   count++;
   // print(count);
@@ -160,13 +160,16 @@ function drawPlanet(x, y, t) {
   rotate(angle);
 
   // Moon
+  moonSize = 0.15 * width;
   fill(255);
   circle(x, -y, moonSize);
   drawMoonTexture(x, -y);
 
   // Eye
   if (eyeOpen) {
-    drawEye(x, 0, PI / 2, t + eyeRandom, 100, 40);
+    let eyeOuterSize = width * 0.1; 
+    let eyeInnerSize = width * 0.04; 
+    drawEye(x, 0, PI / 2, t + eyeRandom, eyeOuterSize, eyeInnerSize);
     
     // Check if the mouse is hovering over the moon
     let moonX = x;
@@ -185,8 +188,9 @@ function drawPlanet(x, y, t) {
   }
 
   // Sun
+  let sunSize = 0.2 * width;
   fill(255, 204, 0);
-  circle(-x, y, 250);
+  circle(-x, y, sunSize);
   pop();
 }
 
@@ -304,7 +308,7 @@ class Pyramid {
     vertex(this.sx, this.sy);
     endShape(CLOSE);
 
-    if (this.isHovered()) {
+    if (this.isHovered() && this.type != "normal") {
       stroke(255);
       strokeWeight(0.05 * this.size);
       noFill();

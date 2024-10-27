@@ -7,6 +7,7 @@ function setup() {
   // scene = random(scenes);
   scene = "space";
   // scene = "desert";
+  scene = "forest";
   // create the canvas using the full browser window
   createCanvas(windowWidth, windowHeight);
 
