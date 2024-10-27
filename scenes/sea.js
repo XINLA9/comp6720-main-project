@@ -4,10 +4,10 @@ let ambientSound;
 let ripples = [];
 let shapes = ["circle", "square"];
 const shapeSoundProperties = {
-  "circle": { waveType: 'sine' },
-  "square": { waveType: 'triangle' },
-  "triangle": { waveType: 'cos' },
-  "cross": { waveType: 'sawtooth' }
+  circle: { waveType: "sine" },
+  square: { waveType: "triangle" },
+  triangle: { waveType: "cos" },
+  cross: { waveType: "sawtooth" },
 };
 let notes = [];
 let bgColor;
@@ -15,25 +15,24 @@ let count_whole = 0;
 let playable_whole = true;
 const notesType = ["C4", "D4", "E4", "F4", "G4", "A4", "B4"];
 const noteFrequencies = {
-  "C4": 261.63,
-  "D4": 293.66,
-  "E4": 329.63,
-  "F4": 349.23,
-  "G4": 392.00,
-  "A4": 440.00,
-  "B4": 493.88
+  C4: 261.63,
+  D4: 293.66,
+  E4: 329.63,
+  F4: 349.23,
+  G4: 392.0,
+  A4: 440.0,
+  B4: 493.88,
 };
 
 let countNotes = [0, 0, 0];
 let sceneCount = [0, 0, 0];
-let seaTrees = [];
-let seaPyrmaids = [];
+let seaItems = [];
 
 function drawSea() {
   background(31, 94, 139);
   push();
   noStroke();
-  fill(color(132,181,201));
+  fill(color(132, 181, 201));
   rect(0, 0.5 * height, width, 0.5 * height);
   pop();
 
@@ -59,7 +58,7 @@ function drawSea() {
         notes[j].vx = cos(angle) * 3; // Adjust push strength
         notes[j].vy = sin(angle) * 3; // Adjust push strength
         notes[j].changeShape();
-        notes[j].play();; // Play the note sound
+        notes[j].play(); // Play the note sound
         ripples[i].collisionRecord[j] = true;
       }
     }
@@ -82,37 +81,55 @@ function drawSea() {
   }
 
   // display all item
-  
+
   drawSeaScene();
-};
+}
 
-function drawSeaScene(){
-
-    // Draw pyramids
-    push();
-    rectMode(CENTER);
-    translate(width / 2, height / 2);
-    for (let i = seaPyramids.length - 1; i >= 0; i--) {
-      seaPyramids[i].update();
-      seaPyramids[i].show();
-  
-      if (seaPyramids[i].z < -100) {
-        seaPyramids.splice(i, 1);
-        seaPyramids.push(new Pyramid());
-      }
+function drawSeaScene() {
+  if (seaItems.length < 50) {
+    if (countNotes[0] > 3) {
+      seaItems.push(new SeaWeed(0));
+      sceneCount[0]++;
+      countNotes[0] = 0;
     }
-
-    for (let i = seaTrees.length - 1; i >= 0; i--) {
-      let tree = seaTrees[i];
-      tree.update();
-      tree.show();
-  
-      if (tree.z < 0) {
-        seaTrees.splice(i, 1);
-      }
+    if (countNotes[1] > 3) {
+      seaItems.push(new SeaWeed(1));
+      sceneCount[1]++;
+      countNotes[1] = 0;
     }
+    if (countNotes[2] > 3) {
+      seaItems.push(new SeaWeed(2));
+      sceneCount[2]++;
+      countNotes[2] = 0;
+    }
+  }
+  print(sceneCount)
+  if(!portal.active){
+    if (sceneCount[0] > 50) {
+       portal.open("desert");
+    }
+    if (sceneCount[1] > 50) {
+       portal.open("forest");
+    }
+    if (sceneCount[2] > 50) {
+       portal.open("space");
+    }
+  }
 
-    pop();
+  // Draw seaitems
+  push();
+  rectMode(CENTER);
+  translate(width / 2, height / 2);
+  for (let i = seaItems.length - 1; i >= 0; i--) {
+    seaItems[i].update();
+    seaItems[i].show();
+
+    if (seaItems[i].z < 0) {
+      seaItems.splice(i, 1);
+    }
+  }
+
+  pop();
 }
 
 // Reset scene: switch background color, clear ripples, regenerate notes
@@ -122,7 +139,7 @@ function resetScene() {
   notes = [];
 
   let notesNumber = map(max(width, height), 800, 2000, 6, 7);
-  generateNotes(random(notesNumber, int(notesNumber * 5 / 4)));
+  generateNotes(random(notesNumber, int((notesNumber * 5) / 4)));
 
   // Randomly switch note shapes
   let newShape = random(shapes);
@@ -134,7 +151,6 @@ function resetScene() {
 function generateNotes(count) {
   let no = 0;
   for (let i = 0; i < count; i++) {
-
     let note;
     let isOverlapping;
 
@@ -157,7 +173,6 @@ function generateNotes(count) {
     if (no >= 7) {
       no = 0;
     }
-
   }
 }
 
@@ -207,7 +222,7 @@ class Note {
     this.x = random(windowWidth / 5, (4 * windowWidth) / 5);
     this.y = random(windowHeight / 5, (4 * windowHeight) / 5);
 
-    let rAdjust = 20 * min(width, height) / 800;
+    let rAdjust = (20 * min(width, height)) / 800;
 
     this.r = random(rAdjust, rAdjust * 2);
     this.color = color(random(255), random(255), random(255), 200);
@@ -249,7 +264,6 @@ class Note {
     if (this.x < this.r || this.x > width - this.r) {
       this.vx *= -1;
       this.play();
-      
     }
     if (this.y < this.r || this.y > height - this.r) {
       this.vy *= -1;
@@ -260,7 +274,18 @@ class Note {
     for (let other of notes) {
       if (other !== this && this.intersects(other)) {
         this.resolveCollision(other);
-        this.play();
+        if (playable_whole) {
+          if (this.shape != other.shape) {
+            countNotes[0]++;
+          }
+          if (this.shape == other.shape && this.shape == "circle") {
+            countNotes[1]++;
+          }
+          if (this.shape == other.shape && this.shape != "circle") {
+            countNotes[2]++;
+          }
+          this.play();
+        }
       }
     }
 
@@ -274,8 +299,8 @@ class Note {
       let frequency = noteFrequencies[this.scale];
 
       let waveType = shapeSoundProperties[this.shape].waveType; // 使用定义的波形
-      let attackTime = this.shape === 'circle' ? 0.3 : 0.01;
-      let releaseTime = this.shape === 'circle' ? 0.5 : 0.1;
+      let attackTime = this.shape === "circle" ? 0.3 : 0.01;
+      let releaseTime = this.shape === "circle" ? 0.5 : 0.1;
 
       osc.setType(waveType);
       env.setADSR(attackTime, 0.2, 0.5, releaseTime);
@@ -318,7 +343,7 @@ class Note {
     if (this.y - this.r < 0) {
       this.y = this.r;
       this.vy = abs(this.vy);
-    } else if (this.y + this.r > height * 0.5) {  // 限制音符只能在上半部分
+    } else if (this.y + this.r > height * 0.5) {
       this.y = height * 0.5 - this.r;
       this.vy = -abs(this.vy);
     }
@@ -333,9 +358,8 @@ class Note {
 
     this.shape = newShape;
     this.color = color(random(255), random(255), random(255), 180);
-    let rAdjust = 20 * min(width, height) / 800;
+    let rAdjust = (20 * min(width, height)) / 800;
     this.r = random(rAdjust, rAdjust * 2);
-
   }
 
   // Check if hit by a ripple
@@ -369,6 +393,99 @@ class Note {
         line(0, -this.r, 0, this.r);
         break;
     }
+    pop();
+  }
+}
+
+class SeaWeed {
+  constructor(no) {
+    let side = random(["left", "right"]);
+    do {
+      if (side == "left") {
+        this.x = random(-0.5 * width, 0);
+      } else {
+        this.x = random(0, 0.5 * width);
+      }
+    } while (this.x > -0.1 * width && this.x < 0.1 * width);
+
+    this.y = random(height * 0.05, height * 0.1);
+    this.z = width + height;
+    this.side = "side";
+
+    let types = ["sand", "star", "leaf"];
+
+    this.type = types[no];
+
+    this.color = this.getColorBasedOnType();
+  }
+
+  getColorBasedOnType() {
+    switch (this.type) {
+      case "sand":
+        return random([color("#FF9800"), color("#FF5722")]);
+      case "leaf":
+        return random([color("#8BC34A"), color("#CDDC39")]);
+      case "star":
+        return random([color("#9E9E9E"), color("#00BCD4")]);
+    }
+  }
+
+  update() {
+    this.z -= speed;
+    this.sx = map(this.x / this.z, 0, 1, 0, width);
+    this.sy = map(this.y / this.z, 0, 1, 0, height);
+    this.size = map(this.z, 0, width + height, width * 0.2, 0);
+
+    this.thick = map(this.z, 0, width + height, 15, 0);
+  }
+
+  show() {
+    push();
+
+    stroke(34, 139, 34);
+    strokeWeight(this.thick);
+    noFill();
+
+    beginShape();
+    curveVertex(this.sx, this.sy);
+    curveVertex(this.sx, this.sy);
+    curveVertex(this.sx + random(-20, 20), this.sy - this.size * 0.5);
+    curveVertex(this.sx + random(-30, 30), this.sy - this.size * 1.5);
+    curveVertex(this.sx + random(-10, 10), this.sy - this.size * 2.5);
+    endShape();
+
+    let color = this.color;
+    color.setAlpha(200);
+    fill(color);
+
+    noStroke();
+
+    triangle(
+      this.sx - this.size * 0.2,
+      this.sy - this.size * 0.5,
+      this.sx + this.size * 0.2,
+      this.sy - this.size * 0.5,
+      this.sx + random(-5, 5),
+      this.sy - this.size * 1
+    );
+
+    triangle(
+      this.sx - this.size * 0.3,
+      this.sy - this.size * 1.2,
+      this.sx + this.size * 0.3,
+      this.sy - this.size * 1.2,
+      this.sx + random(-10, 10),
+      this.sy - this.size * 1.7
+    );
+
+    triangle(
+      this.sx - this.size * 0.25,
+      this.sy - this.size * 1.8,
+      this.sx + this.size * 0.25,
+      this.sy - this.size * 1.8,
+      this.sx + random(-5, 5),
+      this.sy - this.size * 2.3
+    );
     pop();
   }
 }

@@ -128,8 +128,6 @@ class Tree {
       fill(this.color);
     }
     
-    
-
     triangle(
       this.sx - (this.size / 2) * 1.3,
       this.sy - this.size * 1,
