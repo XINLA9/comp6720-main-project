@@ -106,13 +106,16 @@ function drawSeaScene() {
   }
 
   if(!portal.active){
-    if (sceneCount[0] > 50) {
+    if (sceneCount[0] > 5 && sceneCount[1] > 5 && sceneCount[2] > 5) {
+      portal.open("seaM");
+   }
+    if (sceneCount[0] > 35) {
        portal.open("desert");
     }
-    if (sceneCount[1] > 50) {
+    if (sceneCount[1] > 35) {
        portal.open("forest");
     }
-    if (sceneCount[2] > 50) {
+    if (sceneCount[2] > 35) {
        portal.open("space");
     }
   }

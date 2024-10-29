@@ -41,9 +41,10 @@ class Portal {
   }
 
   open(s) {
-    if(s){
+    if (s) {
       this.scene = s;
       this.color = this.getColorBasedOnScene();
+      this.color.setAlpha(240);
       this.active = true;
     }
   }
@@ -51,21 +52,22 @@ class Portal {
   getColorBasedOnScene() {
     switch (this.scene) {
       case "forest":
-        return "#BEE393";
+        return color( "#BEE393" );
       case "desert":
-        return "#F3CD96";
+        return color( "#F3CD96" );
       case "sea":
-        return "#87B0B5";
+        return color( "#87B0B5" );
       case "space":
-        return "#AFAFAF";
+        return color( "#AFAFAF" );
+      case "seatM":
+        return color( "#03A9F4" );
       case "forestM":
-        return [0, 105, 148];
-      default:
-        return [0, 0, 0];
+        return color( "#673AB7" );
+      case "desertM":
+        return color( "#FF9800" );
     }
   }
 }
-
 
 function getYSpeed(y) {
   return map(y, height * 0.5, height, speed * 0.1, speed * 1.8);
