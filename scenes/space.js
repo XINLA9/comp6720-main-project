@@ -1,6 +1,8 @@
 let stars = [];
 let planet;
 
+let planetScenes = ["forest",  "desert", "sea"];
+
 let types = [
   { color: [255, 255, 255], name: "sea", size: 1 },
   { color: [244, 254, 255], name: "forest", size: 1 },
@@ -83,30 +85,28 @@ class Star {
 
 class Planet {
   constructor() {
-    this.x = random(-width * 0.4, width * 0.4);
-    this.y = random(-height * 0.4, height * 0.4);
+    this.reset();
+  }
+
+  reset() {
+    do{this.x = random(-width * 0.4, width * 0.4);}
+    while(this.x > -0.1 * width && this.x < 0.1 * width)
+    do{this.y = random(-height * 0.4, height * 0.4);}
+    while(this.y > -0.1 * height && this.y < 0.1 * height)
+    
     this.z = width + height;
 
     this.sx = 0;
     this.sy = 0;
     this.r = 0;
 
-    this.scene = random(scenes);
-    do this.scene = random(scenes);
-    while (this.scene == "space" || this.scene == "mf") ;
+    this.scene = random(planetScenes);
   }
 
   update() {
     this.z -= speed;
     if (this.z < 1) {
-      this.x = random(-width * 0.4, width * 0.4);
-      this.y = random(-height * 0.4, height * 0.4);
-      this.z = this.z = width + height;
-
-      let newScene = random(scenes);
-      do newScene = random(scenes);
-      while (newScene == "space" || newScene == "mf" || newScene == this.scene);
-      this.scene = newScene;
+      this.reset();
     }
 
     this.sx = map(this.x / this.z, 0, 1, 0, width);
@@ -152,15 +152,11 @@ class Planet {
   getColorBasedOnScene() {
     switch (this.scene) {
       case "forest":
-        return [34, 139, 34];
-      case "mf":
-        return [34, 139, 34];
+        return "#5D8430";
       case "desert":
-        return "yellow";
+        return "#FF9800";
       case "sea":
-        return [0, 105, 148];
-      case "space":
-        return [0, 105, 148];
+        return "#016C7A";
     }
   }
 }

@@ -11,11 +11,11 @@ function setRail() {
 
 let speed = 4;
 
-function getYSpeed(y){
+function getYSpeed(y) {
   return map(y, height * 0.5, height, speed * 0.1, speed * 1.8);
 }
 
-function getXSpeed(x){
+function getXSpeed(x) {
   return map(x, width * 0.5, width, speed * 0.1, speed * 1.8);
 }
 
@@ -151,87 +151,3 @@ class Sleeper {
   }
 }
 
-class Portal {
-  constructor() {
-    this.x = width / 2;
-    this.y = height / 2;
-    this.sizeFactor = 0.02;
-    this.active = false;
-    this.scene = random(scenes);
-
-    do {
-      this.scene = random(scenes);
-    } while (this.scene == scene);
-
-    this.color = this.getColorBasedOnScene();
-  }
-
-  update() {
-    if (this.active) {
-      this.show();
-
-      if (this.y > height * 1.3) {
-        scene = this.scene;
-        this.reset();
-      }
-
-      this.speed = getYSpeed(this.y);
-      this.y += this.speed;
-    }
-  }
-
-  show() {
-    push();
-    fill(this.color);
-    noStroke();
-    // print(this.y);
-    let shortRadius = map(this.y, height / 2, height, 0.06 * width, width);
-    let longRadius = map(
-      this.y,
-      height / 2,
-      height,
-      0.1 * height,
-      2.5 * height
-    );
-    arc(this.x, this.y, shortRadius, longRadius, PI, 0, CHORD);
-    pop();
-  }
-
-  isOffscreen() {
-    return this.y > windowWidth;
-  }
-
-  reset() {
-    this.x = width / 2;
-    this.y = height / 2;
-    this.sizeFactor = 0.02;
-    this.active = false;
-
-    do {
-      this.scene = random(scenes);
-    } while (this.scene == scene);
-
-    this.color = this.getColorBasedOnScene();
-  }
-
-  open(s) {
-    this.scene = s;
-    this.color = this.getColorBasedOnScene();
-    this.active = true;
-  }
-
-  getColorBasedOnScene() {
-    switch (this.scene) {
-      case "forest":
-        return [34, 139, 34];
-      case "desert":
-        return "yellow";
-      case "sea":
-        return [0, 105, 148];
-      case "space":
-        return [0, 105, 148];
-      case "mf":
-        return [0, 105, 148];
-    }
-  }
-}

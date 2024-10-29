@@ -231,7 +231,7 @@ class Tree {
             portal.open("desert");
             break;
           case "magic":
-            portal.open("mf");
+            portal.open("forestM");
             break;
           case "star":
             portal.open("space");

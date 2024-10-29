@@ -1,6 +1,6 @@
-let magicTrees = [];
+let treesM = [];
 
-function drawMagicForest() {
+function drawForestM() {
   isMagicForest = true;
   background(10);
   push();
@@ -8,12 +8,6 @@ function drawMagicForest() {
   fill(60, 68, 110);
   rect(0, 0, width, 0.5 * height);
   pop();
-
-  if (frameCount % 2 == 0) {
-  // if (frameCount % 2 == 0 && magicTrees.length == 0) {
-    let side = random(["left", "right"]);
-    magicTrees.push(new Tree(side));
-  }
 
 // Draw moon
   let moon1X = 0.35 * width;
@@ -49,22 +43,25 @@ function drawMagicForest() {
       portal.open("forest");
     }
   }
-  
 
-  
-  drawMagicTree();
+  // Draw magic tree
+  if (frameCount % 2 == 0) {
+      let side = random(["left", "right"]);
+      treesM.push(new Tree(side));
+    }
+  drawTreeM();
 }
 
-function drawMagicTree() {
+function drawTreeM() {
   push();
   rectMode(CENTER);
   translate(width / 2, height / 2);
-  for (let i = magicTrees.length - 1; i >= 0; i--) {
-    let tree = magicTrees[i];
+  for (let i = treesM.length - 1; i >= 0; i--) {
+    let tree = treesM[i];
     tree.update();
     tree.show();
     if (tree.z < 0) {
-      magicTrees.splice(i, 1);
+      treesM.splice(i, 1);
     }
   }
   pop();

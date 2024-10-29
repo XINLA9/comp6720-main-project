@@ -2,24 +2,24 @@
 let moonSize;
 let eyeCircle = 0;
 let eyeRandom = 0;
-let maxPyramids = 1;
-let seaPyramids = [];
+let pyramids = [];
 let count = 0;
 let cycleDuration = 1440;
 
 let eyeOpen = false;
+let sunShine = 0;
 // let eyeOpen = true;
 let mountainGreen = 0;
 
 function setDesert() {
-  seaPyramids.push(new Pyramid("left"));
-  seaPyramids.push(new Pyramid("right"));
+  pyramids.push(new Pyramid("left"));
+  pyramids.push(new Pyramid("right"));
+  // let side = random(["left", "right"]);
+  // seaPyramids.push(new Pyramid(side));
 }
 
 // Main drawing function
 function drawDesert() {
-  
-
   count++;
   // print(count);
   if (count > cycleDuration) {
@@ -78,7 +78,7 @@ function drawGround(t) {
   } else {
     colorM1 = color("black");
   }
-  colorM1.setAlpha(150);
+  colorM1.setAlpha(100);
 
   fill(colorM1);
   beginShape();
@@ -96,7 +96,7 @@ function drawGround(t) {
   } else {
     colorM1 = color(30, 30, 30);
   }
-  colorM1.setAlpha(200);
+  colorM1.setAlpha(150);
   fill(colorM1);
 
   beginShape();
@@ -108,48 +108,67 @@ function drawGround(t) {
 
   endShape(CLOSE);
 
-  if (mountainGreen > 1) {
+  // Draw far mountains (third layer)
+  if (mountainGreen > 2) {
+    colorM1 = color("#8BC34A");
+  } else {
+    colorM1 = color(30, 30, 30);
+  }
+  colorM1.setAlpha(200);
+  fill(colorM1);
+
+  beginShape();
+  vertex(0, height * 0.5);
+  vertex(width * 0.1, height * 0.5);
+  vertex(width * 0.3, height * 0.35);
+  vertex(width * 0.9, height * 0.45);
+  vertex(width, height * 0.5);
+
+  endShape(CLOSE);
+
+  let isHoveredMountain = mouseY > 0.3 * height && mouseY < 0.5 * height;
+  if (isHoveredMountain) {
     stroke(255);
     strokeWeight(5);
     noFill();
+    beginShape();
+    vertex(0, height * 0.5);
+    vertex(width * 0.2, height * 0.35);
+    vertex(width * 0.4, height * 0.4);
+    vertex(width * 0.7, height * 0.3);
+    vertex(width, height * 0.5);
 
-    if (
-      isHoveredMountain(width * 0.2, height * 0.35, width * 0.4) ||
-      isHoveredMountain(width * 0.3, height * 0.4, width * 0.5)
-    ) {
-      beginShape();
-      vertex(0, height * 0.5);
-      vertex(width * 0.2, height * 0.35);
-      vertex(width * 0.4, height * 0.4);
-      vertex(width * 0.7, height * 0.3);
-      vertex(width, height * 0.5);
+    endShape(CLOSE);
 
-      endShape(CLOSE);
+    beginShape();
+    vertex(0, height * 0.5);
+    vertex(width * 0.3, height * 0.4);
+    vertex(width * 0.5, height * 0.35);
+    vertex(width * 0.8, height * 0.42);
+    vertex(width, height * 0.5);
+    endShape(CLOSE);
 
-      beginShape();
-      vertex(0, height * 0.5);
-      vertex(width * 0.3, height * 0.4);
-      vertex(width * 0.5, height * 0.35);
-      vertex(width * 0.8, height * 0.42);
-      vertex(width, height * 0.5);
-      endShape(CLOSE);
+    beginShape();
+    vertex(0, height * 0.5);
+    vertex(width * 0.1, height * 0.5);
+    vertex(width * 0.3, height * 0.35);
+    vertex(width * 0.9, height * 0.45);
+    vertex(width, height * 0.5);
+
+    endShape(CLOSE);
+
+    if (mouseIsPressed && !isClicked) {
+      mountainGreen++;
+
+      if (!portal.active && mountainGreen > 3) {
+        portal.open("forest");
+        mountainGreen = 0;
+      }
+      isClicked = true;
     }
   }
 
-  if (mouseIsPressed && mountainGreen > 1) {
-    if (
-      isHoveredMountain(width * 0.2, height * 0.35, width * 0.4) ||
-      (isHoveredMountain(width * 0.3, height * 0.4, width * 0.5) &&
-        !portal.active)
-    ) {
-      portal.open("forest");
-    }
-  }
   pop();
-}
-
-function isHoveredMountain(mx, my, size) {
-  return dist(mouseX, mouseY, mx, my) < size / 2;
 }
 
 // Planet (sun/moon) drawing function
@@ -167,21 +186,21 @@ function drawPlanet(x, y, t) {
 
   // Eye
   if (eyeOpen) {
-    let eyeOuterSize = width * 0.1; 
-    let eyeInnerSize = width * 0.04; 
+    let eyeOuterSize = width * 0.1;
+    let eyeInnerSize = width * 0.04;
     drawEye(x, 0, PI / 2, t + eyeRandom, eyeOuterSize, eyeInnerSize);
-    
+
     // Check if the mouse is hovering over the moon
     let moonX = x;
     let moonY = -y;
 
-    let isHoveredMoon = mouseY < 0.2 *  height;
+    let isHoveredMoon = mouseY < 0.2 * height;
     if (isHoveredMoon && count > 900 && count < 1200) {
-      stroke(255, 215, 0); 
+      stroke(255, 215, 0);
       strokeWeight(5);
       noFill();
       circle(moonX, moonY, moonSize);
-      if (mouseIsPressed && !portal.active){
+      if (mouseIsPressed && !portal.active) {
         portal.open("sea");
       }
     }
@@ -189,8 +208,43 @@ function drawPlanet(x, y, t) {
 
   // Sun
   let sunSize = 0.2 * width;
-  fill(255, 204, 0);
+
+  // Shine sun
+
+  fill(255, 215, 0);
   circle(-x, y, sunSize);
+  if (sunShine > 0) {
+    fill(255, 215, 0, 100);
+    circle(-x, y, sunSize * 1.2);
+  }
+  if (sunShine > 1) {
+    fill(255, 215, 0, 150);
+    circle(-x, y, sunSize * 1.4);
+  }
+  if (sunShine > 2) {
+    fill(255, 215, 0, 200);
+    circle(-x, y, sunSize * 1.6);
+  }
+  // print(count)
+
+  let isHoveredSun = mouseY < 0.2 * height && count > 250 && count < 500;
+  if (isHoveredSun) {
+
+    stroke("white");
+    strokeWeight(10);
+    noFill();
+    circle(-x, y, sunSize);
+
+    if (mouseIsPressed && !isClicked) {
+      sunShine++;
+      if (sunShine > 3 && !portal.active){
+        portal.open("desertM");
+        sunShine = 0;
+      }
+       isClicked = true; 
+    }
+  }
+
   pop();
 }
 
@@ -234,13 +288,13 @@ function drawPyramid() {
   push();
   rectMode(CENTER);
   translate(width / 2, height / 2);
-  for (let i = seaPyramids.length - 1; i >= 0; i--) {
-    seaPyramids[i].update();
-    seaPyramids[i].show();
+  for (let i = pyramids.length - 1; i >= 0; i--) {
+    pyramids[i].update();
+    pyramids[i].show();
 
-    if (seaPyramids[i].z < -100) {
-      seaPyramids.splice(i, 1);
-      seaPyramids.push(new Pyramid());
+    if (pyramids[i].z < -100) {
+      pyramids.splice(i, 1);
+      pyramids.push(new Pyramid());
     }
   }
   pop();
@@ -265,8 +319,14 @@ class Pyramid {
     this.z = width + height;
     this.side = "side";
 
-    let types = ["night", "day", "eye", "forest", "normal"];
-    this.type = random(types);
+    // let types = ["night", "day", "eye", "forest", "normal"];
+    let no = random(1);
+    if (no > 0.5) {
+      this.type = random(["eye", "day", "night"]);
+    } else {
+      this.type = "normal";
+    }
+
     this.clicked = false;
   }
 
@@ -331,10 +391,11 @@ class Pyramid {
         switch (this.type) {
           case "forest":
             mountainGreen++;
+            break;
           case "normal":
             break;
           case "eye":
-            eyeOpen = true;
+            eyeOpen = !eyeOpen;
             break;
           case "night":
             count = 1080;

@@ -26,9 +26,10 @@ const noteFrequencies = {
 
 let countNotes = [0, 0, 0];
 let sceneCount = [0, 0, 0];
-let seaItems = [];
+let seaWeeds = [];
 
 function drawSea() {
+  // draw background
   background(31, 94, 139);
   push();
   noStroke();
@@ -86,24 +87,24 @@ function drawSea() {
 }
 
 function drawSeaScene() {
-  if (seaItems.length < 50) {
+  if (seaWeeds.length < 50) {
     if (countNotes[0] > 3) {
-      seaItems.push(new SeaWeed(0));
+      seaWeeds.push(new SeaWeed(0));
       sceneCount[0]++;
       countNotes[0] = 0;
     }
     if (countNotes[1] > 3) {
-      seaItems.push(new SeaWeed(1));
+      seaWeeds.push(new SeaWeed(1));
       sceneCount[1]++;
       countNotes[1] = 0;
     }
     if (countNotes[2] > 3) {
-      seaItems.push(new SeaWeed(2));
+      seaWeeds.push(new SeaWeed(2));
       sceneCount[2]++;
       countNotes[2] = 0;
     }
   }
-  print(sceneCount)
+
   if(!portal.active){
     if (sceneCount[0] > 50) {
        portal.open("desert");
@@ -120,12 +121,13 @@ function drawSeaScene() {
   push();
   rectMode(CENTER);
   translate(width / 2, height / 2);
-  for (let i = seaItems.length - 1; i >= 0; i--) {
-    seaItems[i].update();
-    seaItems[i].show();
+  for (let i = seaWeeds.length - 1; i >= 0; i--) {
+    seaWeeds[i].update();
+    seaWeeds[i].show();
+    print(123)
 
-    if (seaItems[i].z < 0) {
-      seaItems.splice(i, 1);
+    if (seaWeeds[i].z < 0) {
+      seaWeeds.splice(i, 1);
     }
   }
 
@@ -134,7 +136,6 @@ function drawSeaScene() {
 
 // Reset scene: switch background color, clear ripples, regenerate notes
 function resetScene() {
-  bgColor = random(presetBgColors);
   ripples = [];
   notes = [];
 
