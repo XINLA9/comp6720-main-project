@@ -59,7 +59,7 @@ class Portal {
         return color( "#87B0B5" );
       case "space":
         return color( "#AFAFAF" );
-      case "seatM":
+      case "seaM":
         return color( "#03A9F4" );
       case "forestM":
         return color( "#673AB7" );

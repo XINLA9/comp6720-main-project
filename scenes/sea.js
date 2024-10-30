@@ -127,7 +127,6 @@ function drawSeaScene() {
   for (let i = seaWeeds.length - 1; i >= 0; i--) {
     seaWeeds[i].update();
     seaWeeds[i].show();
-    print(123)
 
     if (seaWeeds[i].z < 0) {
       seaWeeds.splice(i, 1);
@@ -302,7 +301,7 @@ class Note {
     if (this.canPlay && playable_whole) {
       let frequency = noteFrequencies[this.scale];
 
-      let waveType = shapeSoundProperties[this.shape].waveType; // 使用定义的波形
+      let waveType = shapeSoundProperties[this.shape].waveType; 
       let attackTime = this.shape === "circle" ? 0.3 : 0.01;
       let releaseTime = this.shape === "circle" ? 0.5 : 0.1;
 
